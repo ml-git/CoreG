@@ -54,18 +54,18 @@ public class InboundQMessageListener {
     private Long REDIS_KEYS_TTL=5L; // 5 Days - default
     private String REDIS_KEYS_TTL_TIME_UNIT="MINUTES"; // 5 Days - default
 
-    @PostConstruct
-    public void init(){
-        logger.info("++++++++++INIT Called+++++++++++++++++");
-        config.useSingleServer().setAddress(redisConnectionString);
-        //config.useSingleServer().setAddress(redisConnectionString);
-        config.setNettyThreads(0);
-        config.setThreads(0);
-        client = Redisson.create(config);
-        service = client.getLiveObjectService();
-        REDIS_KEYS_TTL = Long.parseLong(appConfigRepository.findByOption(appConfigRepository.REDIS_KEYS_TTL).getValue());
-        REDIS_KEYS_TTL_TIME_UNIT = appConfigRepository.findByOption(appConfigRepository.REDIS_KEYS_TTL_TIME_UNIT).getValue();
-    }
+    //@PostConstruct
+//    public void init(){
+//        logger.info("++++++++++INIT Called+++++++++++++++++");
+//        config.useSingleServer().setAddress(redisConnectionString);
+//        //config.useSingleServer().setAddress(redisConnectionString);
+//        config.setNettyThreads(0);
+//        config.setThreads(0);
+//        client = Redisson.create(config);
+//        service = client.getLiveObjectService();
+//        REDIS_KEYS_TTL = Long.parseLong(appConfigRepository.findByOption(appConfigRepository.REDIS_KEYS_TTL).getValue());
+//        REDIS_KEYS_TTL_TIME_UNIT = appConfigRepository.findByOption(appConfigRepository.REDIS_KEYS_TTL_TIME_UNIT).getValue();
+//    }
 
     private MessageFilterExecutorService filterExecutorService = new MessageFilterExecutorService();
     private ExecutorService executor = Executors.newFixedThreadPool(10);
@@ -79,10 +79,13 @@ public class InboundQMessageListener {
 
         try {
 
-            if(client!=null && service!=null) {
-                filter.redisObjectLookUpPersist((String)message.getPayload(), new Date(), service ,sender, outboundLoaderQueue,
-                        (String)headers.get("filename"), client, REDIS_KEYS_TTL, REDIS_KEYS_TTL_TIME_UNIT);
-            }
+//            if(client!=null && service!=null) {
+//                filter.redisObjectLookUpPersist((String)message.getPayload(), new Date(), service ,sender, outboundLoaderQueue,
+//                        (String)headers.get("filename"), client, REDIS_KEYS_TTL, REDIS_KEYS_TTL_TIME_UNIT);
+//
+//            }
+            filter.passAlongToDownstreamQ((String)message.getPayload(), new Date(), service ,sender, outboundLoaderQueue,
+                    (String)headers.get("filename"));
         }
         catch (Exception ex){
             logger.error("Error receiving message", ex);

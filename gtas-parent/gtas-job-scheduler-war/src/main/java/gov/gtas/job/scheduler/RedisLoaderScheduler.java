@@ -61,11 +61,11 @@ public class RedisLoaderScheduler {
         Path dOutputDir = Paths.get(messageProcessedDir).normalize();
         File outputDirFile = dOutputDir.toFile();
         RedisLoaderStatistics stats = new RedisLoaderStatistics();
-        Config config = new Config();
-        //config.setTransportMode(TransportMode.EPOLL);
-        config.useSingleServer().setAddress(redisConnectionString);
-
-        if(client==null) client = Redisson.create(config);
+//        Config config = new Config();
+//        //config.setTransportMode(TransportMode.EPOLL);
+//        config.useSingleServer().setAddress(redisConnectionString);
+//
+//        if(client==null) client = Redisson.create(config);
 
         //processFiles(dInputDir, dOutputDir, stats);
         processAndQFiles(dInputDir, dOutputDir, stats);

@@ -23,6 +23,7 @@ import gov.gtas.svc.TargetingService;
  * scheduling tasks. The class reads configuration values from an external file.
  *
  */
+
 @Component
 public class RuleRunnerScheduler {
 

@@ -230,4 +230,36 @@ public class RedissonFilter {
     }
 
 
+    public void passAlongToDownstreamQ(String messagePayload, Date messageTimestamp,
+                                         RLiveObjectService service,
+                                         InboundQMessageSender sender,
+                                         String outboundLoaderQueue,
+                                         String filename) {
+
+        List<Segment> segments = new ArrayList<>();
+        String tvlLineText = EMPTY_STRING;
+
+        try {
+            EdifactLexer lexer = new EdifactLexer((String) messagePayload);
+            segments = lexer.tokenize();
+
+            for (Segment seg : segments) {
+                if (seg.getName().equalsIgnoreCase(TVL_HEADER_LABEL)) {
+                    tvlLineText = seg.getText();
+                    break;
+                    // not entertaining the concept of multiple PNRs(multiple TVL0 lines) in one file for now
+                    // will revisit if need be
+                }
+            }
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+            publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename, tvlLineText);
+        }
+
+        publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename, tvlLineText);
+    }
+
+
+
 }
